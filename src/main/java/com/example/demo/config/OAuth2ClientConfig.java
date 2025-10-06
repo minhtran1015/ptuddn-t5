@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -22,17 +23,9 @@ public class OAuth2ClientConfig {
     private String issuerUri;
 
     @Bean
+    @ConditionalOnProperty(name = "AUTH0_CLIENT_ID")
     public ClientRegistrationRepository clientRegistrationRepository() {
-        // Only create the OAuth2 client registration if credentials are provided
-        if (clientId != null && !clientId.isEmpty()
-            && clientSecret != null && !clientSecret.isEmpty()
-            && issuerUri != null && !issuerUri.isEmpty()) {
-
-            return new InMemoryClientRegistrationRepository(auth0ClientRegistration());
-        }
-
-        // Return empty repository if credentials are not configured
-        return new InMemoryClientRegistrationRepository();
+        return new InMemoryClientRegistrationRepository(auth0ClientRegistration());
     }
 
     private ClientRegistration auth0ClientRegistration() {
